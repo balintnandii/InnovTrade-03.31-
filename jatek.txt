@@ -1,0 +1,241 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+class Program
+{
+    static int sorok;
+    static int oszlopok;
+    static char[,] palya;
+    static int jatekosSor;
+    static int jatekosOszlop;
+    static List<(int sor, int oszlop)> rabok = new List<(int, int)>();
+    static int kijaratSor;
+    static int kijaratOszlop;
+    static int elkapottRabok = 0;
+
+    static void Main()
+    {
+        Beolvasas();
+
+        while (true)
+        {
+            Rajzol();
+            JatekosMozgatasa();
+            RabokMozgatasa();
+            Ellenorzes();
+        }
+    }
+
+    static void Beolvasas()
+    {
+        string[] sorokFajlbol = File.ReadAllLines("palya.txt");
+
+        sorok = sorokFajlbol.Length;
+        oszlopok = sorokFajlbol[0].Length;
+
+        palya = new char[sorok, oszlopok];
+
+        for (int i = 0; i < sorok; i++)
+        {
+            for (int j = 0; j < oszlopok; j++)
+            {
+                char karakter = sorokFajlbol[i][j];
+                palya[i, j] = karakter;
+
+                if (karakter == 'O')
+                {
+                    jatekosSor = i;
+                    jatekosOszlop = j;
+                }
+                else if (karakter == '*')
+                {
+                    rabok.Add((i, j));
+                }
+                else if (karakter == 'T')
+                {
+                    kijaratSor = i;
+                    kijaratOszlop = j;
+                }
+            }
+        }
+    }
+
+    static void Rajzol()
+    {
+        Console.Clear();
+
+        for (int i = 0; i < sorok; i++)
+        {
+            for (int j = 0; j < oszlopok; j++)
+            {
+                Console.Write(palya[i, j]);
+            }
+            Console.WriteLine();
+        }
+
+        Console.WriteLine();
+        Console.WriteLine($"Elkapott rabok: {elkapottRabok} / {elkapottRabok + rabok.Count}");
+    }
+
+    static void JatekosMozgatasa()
+    {
+        ConsoleKey billentyu = Console.ReadKey(true).Key;
+
+        int ujSor = jatekosSor;
+        int ujOszlop = jatekosOszlop;
+
+        if (billentyu == ConsoleKey.W) ujSor--;
+        else if (billentyu == ConsoleKey.S) ujSor++;
+        else if (billentyu == ConsoleKey.A) ujOszlop--;
+        else if (billentyu == ConsoleKey.D) ujOszlop++;
+
+        if (ujSor < 0 || ujSor >= sorok || ujOszlop < 0 || ujOszlop >= oszlopok)
+            return;
+
+        if (palya[ujSor, ujOszlop] == 'X')
+            return;
+
+        for (int i = 0; i < rabok.Count; i++)
+        {
+            if (rabok[i].sor == ujSor && rabok[i].oszlop == ujOszlop)
+            {
+                rabok.RemoveAt(i);
+                elkapottRabok++;
+                break;
+            }
+        }
+
+        palya[jatekosSor, jatekosOszlop] = ' ';
+        jatekosSor = ujSor;
+        jatekosOszlop = ujOszlop;
+        palya[jatekosSor, jatekosOszlop] = 'O';
+    }
+
+    static void RabokMozgatasa()
+    {
+        Random r = new Random();
+        List<(int sor, int oszlop)> ujRabok = new List<(int, int)>();
+
+        foreach (var rab in rabok)
+        {
+            int irany = r.Next(4);
+            int ujSor = rab.sor;
+            int ujOszlop = rab.oszlop;
+
+            if (irany == 0) ujSor--;
+            else if (irany == 1) ujSor++;
+            else if (irany == 2) ujOszlop--;
+            else if (irany == 3) ujOszlop++;
+
+            if (ujSor < 0 || ujSor >= sorok || ujOszlop < 0 || ujOszlop >= oszlopok)
+            {
+                ujRabok.Add(rab);
+                continue;
+            }
+
+            char cel = palya[ujSor, ujOszlop];
+            if (cel == 'X' || cel == '*' || cel == 'O')
+            {
+                ujRabok.Add(rab);
+                continue;
+            }
+
+            if (ujSor == kijaratSor && ujOszlop == kijaratOszlop)
+            {
+                Console.Clear();
+                Console.WriteLine("💀 Egy rab megszökött! VESZTETTÉL!");
+                Environment.Exit(0);
+            }
+
+            palya[rab.sor, rab.oszlop] = ' ';
+            palya[ujSor, ujOszlop] = '*';
+            ujRabok.Add((ujSor, ujOszlop));
+        }
+
+        rabok = ujRabok;
+    }
+
+    static void Ellenorzes()
+    {
+        if (rabok.Count == 0)
+        {
+            Console.Clear();
+            Console.WriteLine("🎉 Minden rabot elkaptál! GYŐZELEM!");
+            Environment.Exit(0);
+        }
+    }
+}
+----------------------------------------------------------------------------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+class Program
+{
+    static int sorok;
+    static int oszlopok;
+    static char[,] palya;
+    static int jatekosSor;
+    static int jatekosOszlop;
+    static List<(int sor, int oszlop)> rabok = new List<(int, int)>();
+    static int kijaratSor;
+    static int kijaratOszlop;
+
+    static void Main()
+    {
+        Beolvasas();
+        Rajzol();
+    }
+
+    static void Beolvasas()
+    {
+        string[] sorokFajlbol = File.ReadAllLines("palya.txt");
+
+        sorok = sorokFajlbol.Length;
+        oszlopok = sorokFajlbol[0].Length;
+
+        palya = new char[sorok, oszlopok];
+
+        for (int i = 0; i < sorok; i++)
+        {
+            for (int j = 0; j < oszlopok; j++)
+            {
+                char karakter = sorokFajlbol[i][j];
+                palya[i, j] = karakter;
+
+                if (karakter == 'O')
+                {
+                    jatekosSor = i;
+                    jatekosOszlop = j;
+                }
+                else if (karakter == '*')
+                {
+                    rabok.Add((i, j));
+                }
+                else if (karakter == 'T')
+                {
+                    kijaratSor = i;
+                    kijaratOszlop = j;
+                }
+            }
+        }
+    }
+
+    static void Rajzol()
+    {
+        Console.Clear();
+
+        for (int i = 0; i < sorok; i++)
+        {
+            for (int j = 0; j < oszlopok; j++)
+            {
+                Console.Write(palya[i, j]);
+            }
+            Console.WriteLine();
+        }
+
+        Console.WriteLine();
+        Console.WriteLine($"Elkapott rabok: 0 / {rabok.Count}");
+    }
+}
