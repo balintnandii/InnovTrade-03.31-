@@ -1,0 +1,56 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+--
+-- Adatbázis: `tablet`
+--
+CREATE DATABASE IF NOT EXISTS `tablet` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `tablet`;
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `tabletek`
+--
+
+CREATE TABLE `tabletek` (
+  `id` int(11) NOT NULL,
+  `kep` varchar(100) NOT NULL,
+  `gyarto` varchar(100) NOT NULL,
+  `kepmeret` int(11) NOT NULL,
+  `operacios_rendszer` varchar(100) NOT NULL,
+  `ar` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- A tábla adatainak kiíratása `tabletek`
+--
+
+INSERT INTO `tabletek` (`id`, `kep`, `gyarto`, `kepmeret`, `operacios_rendszer`, `ar`) VALUES
+(1, 'tablet1.jpg', 'Samsung', 75, 'android', 240000),
+(2, 'tablet2.jpg', 'Apple', 75, ' 	iOS', 280000),
+(3, 'tablet3.jpg', 'Samsung', 75, 'android', 220000),
+(4, 'tablet4.jpg', 'Apple', 55, ' 	iOS', 370000),
+(5, 'tablet5.jpg', 'Lenovo', 55, 'android', 320000),
+(6, 'tablet6.jpg', 'Samsung', 85, 'android', 380000),
+(7, 'tablet7.jpg', 'Lenovo', 42, 'android', 290000);
+
+--
+-- Indexek a kiírt táblákhoz
+--
+
+--
+-- A tábla indexei `tabletek`
+--
+ALTER TABLE `tabletek`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- A kiírt táblák AUTO_INCREMENT értéke
+--
+
+--
+-- AUTO_INCREMENT a táblához `tabletek`
+--
+ALTER TABLE `tabletek`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
